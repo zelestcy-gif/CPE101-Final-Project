@@ -1,0 +1,13 @@
+[
+  {
+    "week": 1,
+    "topic": "What Engineers Do?",
+    "instructor": "Prof. Jumpol"
+  },
+  {
+    "week": 2,
+    "topic": "Working Foundation",
+    "instructor": "Prof. Nutnan"
+  }
+  // ... continue for all 16 weeks
+]
