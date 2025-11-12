@@ -1,5 +1,75 @@
+:root {
+    --bg: #f4f6f8;
+    --card: #fff;
+    --accent: #2563eb;
+    --muted: #6b7280;
+}
+
+* {
+    box-sizing: border-box
+}
+
 body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    padding-top: 50px;
+    font-family: Inter, Segoe UI, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0
+}
+
+.card {
+    background: var(--card);
+    padding: 24px;
+    border-radius: 10px;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+    width: 320px
+}
+
+h1 {
+    margin: 0 0 12px 0;
+    font-size: 20px
+}
+
+label {
+    display: block;
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 13px
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    border: 1px solid #e6e9ef;
+    border-radius: 6px
+}
+
+.buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px
+}
+
+button {
+    flex: 1;
+    padding: 10px;
+    border-radius: 6px;
+    border: 0;
+    background: var(--accent);
+    color: #fff;
+    cursor: pointer
+}
+
+button[disabled] {
+    opacity: 0.6;
+    cursor: default
+}
+
+.message {
+    margin-top: 12px;
+    color: crimson;
+    font-size: 13px
 }

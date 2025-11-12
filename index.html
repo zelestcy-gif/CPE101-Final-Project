@@ -1,18 +1,32 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CPE 101 Micro-Portal</title>
-    <link rel="stylesheet" href="styles.css">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Login - Supabase Demo</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <h1>Welcome to the CPE 101 Portal Project!</h1>
-    <p>We're setting up the hosting. This will be replaced by our final design soon.</p>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="supabaseClient.js"></script>
+    <main class="card">
+        <h1>Login / Register</h1>
+
+        <label>Email</label>
+        <input id="email" type="email" placeholder="you@example.com">
+
+        <label>Password</label>
+        <input id="password" type="password" placeholder="••••••••">
+
+        <div class="buttons">
+            <button id="signup">Sign up</button>
+            <button id="signin">Sign in</button>
+        </div>
+
+        <div id="message" class="message"></div>
+    </main>
+
+    <script type="module" src="script.js"></script>
 </body>
 
 </html>

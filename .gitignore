@@ -1,23 +1,4 @@
-# ----------------------------------------
-# Build & Operating System Files
-# ----------------------------------------
-.DS_Store             # macOS system files
-Thumbs.db             # Windows system files
-
-# ----------------------------------------
-# Supabase/JavaScript Dependencies
-# ----------------------------------------
-/node_modules         # Ignore package dependencies (if you use npm/yarn)
-
-# ----------------------------------------
-# Local/Sensitive Files (CRUCIAL for security)
-# ----------------------------------------
-# If you later move your sensitive keys out of supabaseClient.js,
-# you must ignore the new file here to prevent accidentally uploading keys.
-/secrets.js
-/config.env
-
-# ----------------------------------------
-# Logs and other generated files
-# ----------------------------------------
-*.log
+node_modules/
+.env
+.env.local
+/.DS_Store
