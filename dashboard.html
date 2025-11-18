@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Course Exploration Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Frontend styles -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="page">
+    <!-- NAVBAR -->
+    <header class="nav">
+      <div class="nav-left">
+        <div class="logo-circle">CE</div>
+        <div>
+          <div class="nav-title">Course Exploration</div>
+          <div class="nav-sub">Prototype portal for this course</div>
+        </div>
+      </div>
+      <nav class="nav-links">
+        <a href="#syllabus">Syllabus</a>
+        <a href="#lessons">Lessons</a>
+        <a href="#gallery">Gallery</a>
+        <a href="#projects">Groups</a>
+        <a href="#submission">Submission</a>
+        <a href="#contact">DM</a>
+        <a href="#" id="logoutBtn">Logout</a>
+      </nav>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div>
+        <h1 class="hero-title">Central hub for class, projects, and announcements.</h1>
+        <p class="hero-subtitle">
+          One place for syllabus, weekly materials, project info, and anonymous communication between students and TAs/professors.
+        </p>
+
+        <div class="hero-tags">
+          <span class="tag-pill">Syllabus</span>
+          <span class="tag-pill">Lessons by week</span>
+          <span class="tag-pill">Project groups</span>
+          <span class="tag-pill">Submissions</span>
+          <span class="tag-pill">Anonymous DM</span>
+        </div>
+      </div>
+
+      <aside class="hero-right">
+        <div>
+          <div class="hero-label">Core features (MVP)</div>
+          <ul class="hero-list">
+            <li>Syllabus overview</li>
+            <li>Lessons per week</li>
+            <li>Project groupings</li>
+            <li>Submission portal</li>
+            <li>Anonymous DM</li>
+          </ul>
+        </div>
+        <div>
+          <div class="hero-label">Tech stack (frontend view)</div>
+          <ul class="hero-list">
+            <li>HTML / CSS / JS</li>
+            <li>Supabase (DB &amp; auth)</li>
+            <li>Vercel (deploy)</li>
+            <li>Nessie (data host)</li>
+          </ul>
+        </div>
+      </aside>
+    </section>
+
+    <!-- MAIN LAYOUT -->
+    <main class="layout">
+      <!-- LEFT COLUMN: Syllabus + Lessons + Gallery -->
+      <div class="col-left">
+        <!-- SYLLABUS -->
+        <section id="syllabus" class="card">
+          <div class="card-header">
+            <h2 class="card-title">Syllabus overview</h2>
+            <span class="card-sub">Quick view of the whole semester</span>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Week</th>
+                <th>Topic</th>
+                <th>Deliverables</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>Course intro &amp; tools</td>
+                <td>
+                  Join class group
+                  <span class="badge-soft">Setup</span>
+                </td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>HTML &amp; CSS basics</td>
+                <td>Mini page layout</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>Forms &amp; basic JS</td>
+                <td>Form validation draft</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>Project proposal</td>
+                <td>
+                  Team proposal
+                  <span class="badge-soft">Project</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- LESSONS -->
+        <section id="lessons" class="card" style="margin-top: 1rem;">
+          <div class="card-header">
+            <h2 class="card-title">Lessons by week</h2>
+            <span class="card-sub">Link to slides / materials</span>
+          </div>
+
+          <div class="lesson-list">
+            <article class="lesson-item">
+              <div class="lesson-week">Week 1</div>
+              <div class="lesson-title">Introduction &amp; course overview</div>
+              <div>Slides, course rules, grading.</div>
+            </article>
+
+            <article class="lesson-item">
+              <div class="lesson-week">Week 2</div>
+              <div class="lesson-title">HTML structure</div>
+              <div>Elements, headings, lists, semantic tags.</div>
+            </article>
+
+            <article class="lesson-item">
+              <div class="lesson-week">Week 3</div>
+              <div class="lesson-title">Styling with CSS</div>
+              <div>Layout, spacing, basic components.</div>
+            </article>
+
+            <article class="lesson-item">
+              <div class="lesson-week">Week 4</div>
+              <div class="lesson-title">Forms &amp; user input</div>
+              <div>Form fields, validation, UX.</div>
+            </article>
+          </div>
+        </section>
+
+        <!-- GALLERY -->
+        <section id="gallery" class="card" style="margin-top: 1rem;">
+          <div class="card-header">
+            <h2 class="card-title">Class gallery</h2>
+            <span class="card-sub">Photos from activities &amp; projects</span>
+          </div>
+          <div class="gallery-grid">
+            <div class="gallery-item">
+              <span class="gallery-label">Week 1 – Orientation</span>
+            </div>
+            <div class="gallery-item">
+              <span class="gallery-label">Lab session</span>
+            </div>
+            <div class="gallery-item">
+              <span class="gallery-label">Group work</span>
+            </div>
+            <div class="gallery-item">
+              <span class="gallery-label">Presentation</span>
+            </div>
+            <div class="gallery-item">
+              <span class="gallery-label">Workshop</span>
+            </div>
+            <div class="gallery-item">
+              <span class="gallery-label">Showcase</span>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- RIGHT COLUMN: Projects + Submission + DM -->
+      <div class="col-right">
+        <!-- PROJECT GROUPS -->
+        <section id="projects" class="card">
+          <div class="card-header">
+            <h2 class="card-title">Project groupings</h2>
+            <span class="card-sub">Teams &amp; topics</span>
+          </div>
+          <ul class="project-list">
+            <li class="project-item">
+              <span>Group 11 — Course portal</span>
+              <span class="pill-soft">Website</span>
+            </li>
+            <li class="project-item">
+              <span>Group 14 — Learning dashboard</span>
+              <span class="pill-soft">Analytics</span>
+            </li>
+            <li class="project-item">
+              <span>Group 17 — Activity tracker</span>
+              <span class="pill-soft">Web app</span>
+            </li>
+            <li class="project-item">
+              <span>Group 22 — Media gallery</span>
+              <span class="pill-soft">Content</span>
+            </li>
+          </ul>
+        </section>
+
+        <!-- SUBMISSION PORTAL -->
+        <section id="submission" class="card" style="margin-top: 1rem;">
+          <div class="card-header">
+            <h2 class="card-title">Submission portal</h2>
+            <span class="card-sub">Assignments &amp; deadlines</span>
+          </div>
+          <div class="assignment-list">
+            <div class="assignment-item">
+              <div>
+                <div><strong>Assignment 1 — Personal webpage</strong></div>
+                <div class="assignment-meta">
+                  Due: Week 3, Sunday 23:59 • Format: .zip or GitHub link
+                </div>
+              </div>
+
+              <button class="btn-outline" data-assignment-id="1">Upload</button>
+            </div>
+
+            <div class="assignment-item">
+              <div>
+                <div><strong>Assignment 2 — Wireframes</strong></div>
+                <div class="assignment-meta">
+                  Due: Week 4, Sunday 23:59 • Format: PDF
+                </div>
+              </div>
+              <button class="btn-outline" data-assignment-id="2">Upload</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ANONYMOUS DM -->
+        <section id="contact" class="card" style="margin-top: 1rem;">
+          <div class="card-header">
+            <h2 class="card-title">Anonymous DM to TA / professor</h2>
+            <span class="card-sub">Questions, feedback, concerns</span>
+          </div>
+
+          <form class="form-grid" id="dmForm">
+            <div class="form-row">
+              <label for="topic">Topic</label>
+              <select id="dmTopic" name="topic">
+                <option>General question</option>
+                <option>Homework / project</option>
+                <option>Class feedback</option>
+                <option>Personal concern</option>
+              </select>
+            </div>
+
+            <div class="form-row">
+              <label for="message">Message</label>
+              <textarea id="dmMessage" name="message" placeholder="Type your message here..."></textarea>
+            </div>
+
+            <div class="form-row">
+              <label>Optional info</label>
+              <div class="form-inline">
+                <input type="checkbox" id="dmAnonymous" checked />
+                <label for="dmAnonymous">Send as anonymous</label>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-primary btn-sm">Send message</button>
+          </form>
+        </section>
+      </div>
+    </main>
+
+    <footer class="footer">
+      Prototype frontend for CPE101 course exploration website.
+    </footer>
+  </div>
+
+  <!-- Backend logic / API integration -->
+  <script type="module" src="dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "name": "login-system",
+  "version": "1.0.0",
+  "description": "Simple Supabase login demo (HTML/CSS/JS)",
+  "private": true,
+  "scripts": {
+    "start": "npx serve . -l 3000"
+  },
+  "devDependencies": {
+    "serve": "^14.2.0"
+  }
+}
