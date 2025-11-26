@@ -1,173 +1,164 @@
-# Login System (Supabase + HTML/JS)
+Course Exploration Portal
 
-This is a minimal demo of a login/register flow using Supabase (SQL) with a static frontend (HTML, CSS, vanilla JS).
+A full-featured Course Management System prototype built with Vanilla HTML/JS and Supabase. This application allows instructors to manage course content dynamically and students to view materials, submit assignments, and communicate with staff.
 
 Features
-- Email/password sign up
-- Email/password sign in
-- Simple dashboard page that shows the authenticated user's email
-- Uses the supabase-js ESM CDN (no build step required)
 
-Prerequisites
-- Node.js (for running the static server) — optional if you serve files another way
-- A Supabase project (https://app.supabase.com)
+Student Dashboard
 
-Quick start
-1. Create a Supabase project and note your Project URL and anon/public API key.
-2. Open `login-system/supabaseConfig.js` and replace the placeholders with your values.
-3. Choose one of the following ways to run:
+Dynamic Content: View Announcements, Syllabus, Lessons, and Project Groups fetched in real-time.
 
-**Option A: Using npm + serve (requires Node.js)**
-```powershell
-npm install
-npm run start
-```
-Then open http://localhost:3000
+Gallery: View course activity photos.
 
-**Option B: Using Live Server extension (VS Code)**
-- Right-click on `index.html` and select "Open with Live Server"
-- Live Server will open the page in your default browser (usually http://127.0.0.1:5500)
+Submission Portal: Upload assignment files (PDFs, Zips) directly to cloud storage.
 
-Notes
-- Signup uses `supabase.auth.signUp({ email, password })`. Supabase may require email confirmation depending on your project auth settings.
-- Sign in uses `supabase.auth.signInWithPassword({ email, password })`.
-- After login the client redirects to `dashboard.html`, which checks the session with Supabase and displays the user's email.
-- Keys are now stored in environment variables for security (not in the repo).
+Status Tracking: See which assignments have been submitted (Green Badge) and remove submissions if needed.
 
-## Deploy to Vercel
+Direct Messages: Send messages to instructors (Anonymous or Signed).
 
-1. **Push your code to GitHub:**
-   ```powershell
-   git init
-   git add .
-   git commit -m "Initial commit"
-   git remote add origin https://github.com/YOUR_USERNAME/login-system.git
-   git branch -M main
-   git push -u origin main
-   ```
+Admin Panel (Protected)
 
-2. **Go to https://vercel.com and sign up (or log in)**
+Secure Access: Only users listed in the admins database table can access this page.
 
-3. **Import your GitHub repo:**
-   - Click "Add New..." > "Project"
-   - Select your GitHub repo
-   - Click "Import"
+Content Management: Create/Delete Announcements, Syllabus items, Lessons, and Project Groups.
 
-4. **Set environment variables in Vercel dashboard:**
-   - In the project settings, go to "Settings" > "Environment Variables"
-   - Add two new variables:
-     - `VITE_SUPABASE_URL` = `https://nqchsbvdsfvbwqkowyrx.supabase.co` (your URL)
-     - `VITE_SUPABASE_ANON_KEY` = your anon key
-   - Click "Save"
+Media Management: Upload photos to the Gallery.
 
-4. **Deploy:**
-   - Vercel will auto-deploy when you push to `main`, or click "Redeploy" manually
+Assignment Management: Create new assignment "buckets" for students.
 
-Your site will be live at: `https://<your-project>.vercel.app` (or your custom domain)
+Inbox: Read Direct Messages (shows sender email unless sent anonymously).
 
-## Notes about environment variables and runtime config
+Grading/Review: View and download student submissions.
 
-This project reads public Supabase keys at runtime from a serverless endpoint (`/api/config`) so the client never needs keys stored in source.
+Tech Stack
 
-On Vercel (recommended):
-1. In your Vercel project settings add Environment Variables (Settings → Environment Variables):
-   - `SUPABASE_URL` = `https://...supabase.co`
-   - `SUPABASE_ANON_KEY` = your anon/public key
+Frontend: HTML5, CSS3, Vanilla JavaScript (ES Modules).
 
-2. Vercel serverless functions (the `api/` folder) can access `process.env` and will return these values to the client at `/api/config`.
+Backend: Supabase (PostgreSQL Database).
 
-Local development options:
-- Option A: Copy `.env.local.example` to `.env.local` and fill values. If you use a local dev server that can proxy `/api/config` to return the values (or use a local dev adapter that supports serverless functions), the app will run the same as on Vercel.
-- Option B (quick): For quick local testing with Live Server, edit `supabaseConfig.js` temporarily to set `window.__SUPABASE_URL` and `window.__SUPABASE_ANON_KEY` before your app code runs (only for local testing; do not commit those values).
+Auth: Supabase Auth (Email/Password).
 
-## Local development with environment variables
+Storage: Supabase Storage (for images and assignment files).
 
-1. Create `.env.local` from `.env.local.example`:
-   ```powershell
-   Copy-Item .env.local.example .env.local
-   ```
+Security: PostgreSQL Row Level Security (RLS) Policies.
 
-2. Edit `.env.local` and add your Supabase keys
+Setup Guide
 
-3. Run with Live Server or npm start as before
-- If you want a stronger protection on the dashboard, create a server-side check or verify sessions on the server before returning sensitive data.
+1. Prerequisites
 
-## Troubleshooting: Login Not Working on Live Server
+A Supabase account.
 
-If login doesn't work on your live Vercel deployment, follow these steps:
+Node.js (optional, only if using npm start to serve).
 
-### Step 1: Check Vercel Environment Variables
-1. Go to your Vercel project dashboard
-2. Click **Settings** → **Environment Variables**
-3. Verify these variables are set:
-   - `SUPABASE_URL` = your Supabase project URL (e.g., `https://xxx.supabase.co`)
-   - `SUPABASE_ANON_KEY` = your public anon key
+VS Code "Live Server" extension (alternative to Node.js).
 
-**❌ If missing:** Add them and redeploy
+2. Supabase Setup
 
-### Step 2: Check Browser Console for Errors
-1. Open your deployed site on Vercel
-2. Press **F12** to open Developer Tools
-3. Click the **Debug Info** button on the login page
-4. Look for error messages in:
-   - The debug panel
-   - The **Console** tab
+Create a new Supabase project.
 
-**Common errors:**
-- `❌ Supabase configuration not found` → Environment variables not set on Vercel
-- `Failed to fetch /api/config` → API endpoint not working
-- `Invalid login credentials` → Wrong email/password or user doesn't exist
+Go to the SQL Editor and run the schema setup (see "Database Schema" section below).
 
-### Step 3: Verify Supabase Project Settings
-1. Go to https://app.supabase.com
-2. Select your project
-3. Go to **Settings** → **API**
-4. Copy your Project URL and Anon Key
-5. Verify they match what's in your Vercel environment variables
+Go to Storage, create a new bucket named course-content, and toggle Public to ON.
 
-### Step 4: Test the API Endpoint
-1. In your browser, visit: `https://your-vercel-app.vercel.app/api/config`
-2. You should see JSON with your Supabase credentials:
-   ```json
-   {
-     "SUPABASE_URL": "https://xxx.supabase.co",
-     "SUPABASE_ANON_KEY": "your-key-here"
-   }
-   ```
+Go to Authentication settings and disable "Confirm Email" if you want instant logins for testing.
 
-**❌ If you see an error:** The API function is not accessible. This usually means environment variables aren't set.
+3. Local Installation
 
-### Step 5: Check User Exists in Supabase
-1. Go to https://app.supabase.com → Your Project
-2. Click **Authentication** → **Users**
-3. Verify the user you're trying to log in with exists
-4. If not, use the login page to sign up a new user first
+Clone or download this repository.
 
-### Step 6: Redeploy After Changes
-After setting environment variables, you **must redeploy**:
-1. Go to your Vercel project
-2. Click **Deployments**
-3. Find your latest deployment
-4. Click **...** → **Redeploy**
+Create a supabaseConfig.js file (or edit the existing one) with your credentials:
 
-Or simply push a new commit to trigger auto-deploy.
-
-### Step 7: Check CORS and Auth Settings
-In your Supabase project:
-1. Go to **Authentication** → **URL Configuration**
-2. Under **Redirect URLs**, make sure your Vercel URL is listed:
-   ```
-   https://your-project.vercel.app
-   https://your-project.vercel.app/dashboard.html
-   ```
-3. Under **Site URL**, set it to: `https://your-project.vercel.app`
-
-Files of interest
-- `index.html` — login & signup UI
-- `dashboard.html` — protected UI after login
-- `style.css` — styles
-- `script.js` — client-side auth logic
-- `supabaseConfig.js` — Supabase initialization with fallback strategies
-- `api/config.js` — Vercel API endpoint for runtime config
+// supabaseConfig.js
+// Use your specific Project URL and Anon Key
+window.__SUPABASE_URL = "[https://your-project-id.supabase.co](https://your-project-id.supabase.co)";
+window.__SUPABASE_ANON_KEY = "your-anon-key";
 
 
+(Note: The project is set up to fetch these from Vercel environment variables in production, or window globals/localStorage in development).
+
+Run the project:
+
+Using VS Code: Right-click index.html -> "Open with Live Server".
+
+Using Node: Run npm install then npm start.
+
+Database Schema & SQL Setup
+
+To make the app function, run the following SQL in your Supabase Dashboard:
+
+-- 1. Content Tables
+create table announcements ( id uuid default gen_random_uuid() primary key, title text not null, content text not null, created_at timestamptz default now() );
+create table lessons ( id uuid default gen_random_uuid() primary key, week_number text not null, title text not null, description text, created_at timestamptz default now() );
+create table syllabus ( id uuid default gen_random_uuid() primary key, week_number text not null, topic text not null, deliverables text, has_badge boolean default false, created_at timestamptz default now() );
+create table project_groups ( id uuid default gen_random_uuid() primary key, name text not null, category text, description text, created_at timestamptz default now() );
+create table gallery ( id uuid default gen_random_uuid() primary key, caption text, image_url text not null, created_at timestamptz default now() );
+
+-- 2. Interaction Tables
+create table assignments ( id uuid default gen_random_uuid() primary key, title text not null, due_date text, format text, created_at timestamptz default now() );
+create table submissions ( id uuid default gen_random_uuid() primary key, assignment_id uuid references assignments(id) on delete cascade, student_email text, file_url text not null, submitted_at timestamptz default now() );
+create table messages ( id uuid default gen_random_uuid() primary key, topic text, message text not null, is_anonymous boolean default false, student_email text, created_at timestamptz default now() );
+
+-- 3. Admin Security Table
+create table admins ( email text primary key, created_at timestamptz default now() );
+
+-- 4. Enable RLS
+alter table announcements enable row level security;
+alter table lessons enable row level security;
+alter table syllabus enable row level security;
+alter table project_groups enable row level security;
+alter table gallery enable row level security;
+alter table assignments enable row level security;
+alter table submissions enable row level security;
+alter table messages enable row level security;
+alter table admins enable row level security;
+
+-- 5. Helper Function for Admin Check
+create or replace function is_admin() returns boolean as $$
+begin
+  return exists (select 1 from admins where email = auth.jwt() ->> 'email');
+end;
+$$ language plpgsql security definer;
+
+-- 6. Add Policies (Summary)
+-- Run specific policy creation scripts to:
+-- - Allow public read on content.
+-- - Allow is_admin() to insert/delete content.
+-- - Allow authenticated users to insert submissions/messages.
+
+
+How to make yourself an Admin
+
+Since the Admin Panel is protected by the database, you must manually add your email to the admins table via the SQL Editor:
+
+INSERT INTO admins (email) VALUES ('your-email@example.com');
+
+
+Project Structure
+
+index.html: Login / Landing page.
+
+dashboard.html: Main student view (Syllabus, Assignments, etc.).
+
+admin.html: Instructor CMS (Content Entry, Inbox).
+
+script.js: Logic for Login/Auth.
+
+dashboard.js: Logic for fetching data, rendering lists, and handling uploads.
+
+supabaseConfig.js: Supabase client initialization.
+
+style.css: Global styling variables and layout.
+
+Deployment (Vercel)
+
+Push code to GitHub.
+
+Import project into Vercel.
+
+In Vercel Project Settings > Environment Variables, add:
+
+SUPABASE_URL
+
+SUPABASE_ANON_KEY
+
+Deploy! The api/config.js (serverless function) will handle passing these keys to the frontend securely.

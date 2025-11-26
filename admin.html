@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Panel - Course Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Admin Specific Styles */
+    .admin-badge { background: #fee2e2; color: #991b1b; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+    .status-msg { margin-top: 5px; font-size: 0.8rem; font-weight: 600; min-height: 1.2em;}
+    .success { color: green; } .error { color: red; }
+    
+    .manage-section { margin-top: 2rem; border-top: 2px dashed var(--border); padding-top: 2rem; }
+    .data-list { list-style: none; max-height: 250px; overflow-y: auto; background: #f9fafb; border: 1px solid var(--border); border-radius: 8px; }
+    .data-item { padding: 0.75rem; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
+    .data-item:last-child { border-bottom: none; }
+    .data-info { display: flex; flex-direction: column; gap: 0.2rem; }
+    .data-meta { font-size: 0.75rem; color: var(--text-muted); }
+    
+    .btn-delete { background: #fee2e2; color: #dc2626; border: none; padding: 0.3rem 0.6rem; border-radius: 4px; cursor: pointer; font-size: 0.75rem; }
+    .btn-delete:hover { background: #fecaca; }
+
+    /* Tabs for clean UI */
+    .admin-tabs { display: flex; gap: 1rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+    .tab-btn { background: none; border: none; padding: 0.5rem 1rem; cursor: pointer; color: var(--text-muted); font-weight: 600; border-bottom: 2px solid transparent; }
+    .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <header class="nav">
+      <div class="nav-left">
+        <div class="logo-circle">AD</div>
+        <div>
+          <div class="nav-title">Admin Dashboard <span class="admin-badge">Protected</span></div>
+          <div class="nav-sub">Manage Content & Submissions</div>
+        </div>
+      </div>
+      <nav class="nav-links">
+        <a href="dashboard.html">View Portal</a>
+        <a href="#" id="logoutBtn">Logout</a>
+      </nav>
+    </header>
+
+    <div class="admin-tabs">
+      <button class="tab-btn active" onclick="switchTab('content')">Content Entry</button>
+      <button class="tab-btn" onclick="switchTab('inbox')">Inbox & Submissions</button>
+    </div>
+
+    <!-- TAB 1: CONTENT ENTRY -->
+    <main id="tab-content" class="tab-content active layout">
+      
+      <!-- LEFT COL -->
+      <div class="col-left">
+        <!-- ANNOUNCEMENTS -->
+        <section class="card">
+          <div class="card-header"><h2 class="card-title">1. Announcements</h2></div>
+          <form id="announcementForm" class="form-grid">
+            <input type="text" id="annTitle" placeholder="Title" required />
+            <textarea id="annContent" placeholder="Message content..." required></textarea>
+            <button type="submit" class="btn-primary btn-sm">Post</button>
+            <div id="annMsg" class="status-msg"></div>
+          </form>
+          <div class="manage-section">
+            <h4 style="font-size:0.8rem; margin-bottom:0.5rem;">Manage Announcements</h4>
+            <ul id="list-announcements" class="data-list">Loading...</ul>
+          </div>
+        </section>
+
+        <!-- LESSONS -->
+        <section class="card" style="margin-top: 1.5rem;">
+          <div class="card-header"><h2 class="card-title">2. Lessons</h2></div>
+          <form id="lessonForm" class="form-grid">
+            <input type="text" id="lesWeek" placeholder="Week Number (e.g. Week 4)" required />
+            <input type="text" id="lesTitle" placeholder="Lesson Title" required />
+            <input type="text" id="lesDesc" placeholder="Description/Resources" />
+            <button type="submit" class="btn-primary btn-sm">Add Lesson</button>
+            <div id="lesMsg" class="status-msg"></div>
+          </form>
+          <div class="manage-section">
+            <h4 style="font-size:0.8rem; margin-bottom:0.5rem;">Manage Lessons</h4>
+            <ul id="list-lessons" class="data-list">Loading...</ul>
+          </div>
+        </section>
+
+        <!-- SYLLABUS -->
+        <section class="card" style="margin-top: 1.5rem;">
+          <div class="card-header"><h2 class="card-title">3. Syllabus</h2></div>
+          <form id="syllabusForm" class="form-grid">
+            <input type="text" id="sylWeek" placeholder="Week #" required />
+            <input type="text" id="sylTopic" placeholder="Topic" required />
+            <input type="text" id="sylDeliv" placeholder="Deliverables" />
+            <div class="form-inline"><input type="checkbox" id="sylBadge" /> <label>Highlight Badge?</label></div>
+            <button type="submit" class="btn-primary btn-sm">Add Item</button>
+            <div id="sylMsg" class="status-msg"></div>
+          </form>
+          <div class="manage-section">
+            <h4 style="font-size:0.8rem; margin-bottom:0.5rem;">Manage Syllabus</h4>
+            <ul id="list-syllabus" class="data-list">Loading...</ul>
+          </div>
+        </section>
+      </div>
+
+      <!-- RIGHT COL -->
+      <div class="col-right">
+        <!-- PROJECT GROUPS -->
+        <section class="card">
+          <div class="card-header"><h2 class="card-title">4. Project Groups</h2></div>
+          <form id="groupForm" class="form-grid">
+            <input type="text" id="grpName" placeholder="Group Name (e.g. Group 12)" required />
+            <input type="text" id="grpCat" placeholder="Category (e.g. Web App)" required />
+            <input type="text" id="grpDesc" placeholder="Project Description" />
+            <button type="submit" class="btn-primary btn-sm">Create Group</button>
+            <div id="grpMsg" class="status-msg"></div>
+          </form>
+          <div class="manage-section">
+            <h4 style="font-size:0.8rem; margin-bottom:0.5rem;">Manage Groups</h4>
+            <ul id="list-groups" class="data-list">Loading...</ul>
+          </div>
+        </section>
+
+        <!-- ASSIGNMENTS -->
+        <section class="card" style="margin-top: 1.5rem;">
+          <div class="card-header"><h2 class="card-title">5. Assignments</h2></div>
+          <p style="font-size:0.75rem; color:gray; margin-bottom:0.5rem;">Create a bucket for students to submit files.</p>
+          <form id="assignForm" class="form-grid">
+            <input type="text" id="asgTitle" placeholder="Title (e.g. Assignment 1)" required />
+            <input type="text" id="asgDue" placeholder="Due Date (e.g. Oct 20)" required />
+            <input type="text" id="asgFmt" placeholder="Format (e.g. PDF)" required />
+            <button type="submit" class="btn-primary btn-sm">Open Assignment</button>
+            <div id="asgMsg" class="status-msg"></div>
+          </form>
+          <div class="manage-section">
+            <h4 style="font-size:0.8rem; margin-bottom:0.5rem;">Active Assignments</h4>
+            <ul id="list-assignments" class="data-list">Loading...</ul>
+          </div>
+        </section>
+
+        <!-- GALLERY -->
+        <section class="card" style="margin-top: 1.5rem;">
+          <div class="card-header"><h2 class="card-title">6. Gallery</h2></div>
+          <form id="galleryForm" class="form-grid">
+            <input type="file" id="galFile" accept="image/*" required />
+            <input type="text" id="galCaption" placeholder="Caption" required />
+            <button type="submit" class="btn-primary btn-sm">Upload Photo</button>
+            <div id="galMsg" class="status-msg"></div>
+          </form>
+          <div class="manage-section">
+            <h4 style="font-size:0.8rem; margin-bottom:0.5rem;">Manage Photos</h4>
+            <ul id="list-gallery" class="data-list">Loading...</ul>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- TAB 2: INBOX (DMs & Submissions) -->
+    <main id="tab-inbox" class="tab-content layout">
+      <div class="col-left">
+        <section class="card">
+          <div class="card-header"><h2 class="card-title">Student Submissions</h2></div>
+          <p style="font-size:0.8rem; color:gray; margin-bottom:1rem;">Files uploaded by students for active assignments.</p>
+          <ul id="list-submissions" class="data-list" style="max-height: 600px;">Loading...</ul>
+        </section>
+      </div>
+
+      <div class="col-right">
+        <section class="card">
+          <div class="card-header"><h2 class="card-title">Direct Messages</h2></div>
+          <p style="font-size:0.8rem; color:gray; margin-bottom:1rem;">Feedback and questions from the DM form.</p>
+          <ul id="list-messages" class="data-list" style="max-height: 600px;">Loading...</ul>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- ADMIN LOGIC -->
+  <script type="module">
+    import { initSupabase } from './supabaseConfig.js'
+
+    // Tab Switching
+    window.switchTab = (tabName) => {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById('tab-' + tabName).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    (async function initAdmin() {
+      const supabase = await initSupabase();
+      if (!supabase) return alert("Supabase not configured.");
+      
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { 
+        window.location.href = 'index.html'; 
+        return; 
+      }
+
+      // 1. CHECK DATABASE FOR ADMIN STATUS
+      // We query the 'admins' table for a row matching our email.
+      // The RLS policy we created ensures we can only find our own row.
+      const { data: adminRecord, error } = await supabase
+        .from('admins')
+        .select('email')
+        .eq('email', user.email)
+        .single();
+
+      if (error || !adminRecord) {
+        console.warn("User attempted admin access but was not found in admins table:", user.email);
+        alert("ACCESS DENIED: Your email is not listed as an administrator.");
+        window.location.href = 'dashboard.html';
+        return;
+      }
+
+      console.log("Welcome Admin:", user.email);
+
+      document.getElementById('logoutBtn').addEventListener('click', async (e) => {
+        e.preventDefault(); await supabase.auth.signOut(); window.location.href = 'index.html';
+      });
+
+      // --- 1. INSERT HANDLERS ---
+      
+      const handleInsert = async (table, data, msgId, form) => {
+        const { error } = await supabase.from(table).insert([data]);
+        const el = document.getElementById(msgId);
+        if (error) { el.textContent = error.message; el.className = 'status-msg error'; }
+        else { el.textContent = 'Saved!'; el.className = 'status-msg success'; form.reset(); refreshAll(); }
+      };
+
+      // Announcement
+      document.getElementById('announcementForm').addEventListener('submit', e => {
+        e.preventDefault();
+        handleInsert('announcements', {
+          title: document.getElementById('annTitle').value,
+          content: document.getElementById('annContent').value
+        }, 'annMsg', e.target);
+      });
+
+      // Syllabus
+      document.getElementById('syllabusForm').addEventListener('submit', e => {
+        e.preventDefault();
+        handleInsert('syllabus', {
+          week_number: document.getElementById('sylWeek').value,
+          topic: document.getElementById('sylTopic').value,
+          deliverables: document.getElementById('sylDeliv').value,
+          has_badge: document.getElementById('sylBadge').checked
+        }, 'sylMsg', e.target);
+      });
+
+      // Lessons
+      document.getElementById('lessonForm').addEventListener('submit', e => {
+        e.preventDefault();
+        handleInsert('lessons', {
+          week_number: document.getElementById('lesWeek').value,
+          title: document.getElementById('lesTitle').value,
+          description: document.getElementById('lesDesc').value
+        }, 'lesMsg', e.target);
+      });
+
+      // Groups
+      document.getElementById('groupForm').addEventListener('submit', e => {
+        e.preventDefault();
+        handleInsert('project_groups', {
+          name: document.getElementById('grpName').value,
+          category: document.getElementById('grpCat').value,
+          description: document.getElementById('grpDesc').value
+        }, 'grpMsg', e.target);
+      });
+
+      // Assignments
+      document.getElementById('assignForm').addEventListener('submit', e => {
+        e.preventDefault();
+        handleInsert('assignments', {
+          title: document.getElementById('asgTitle').value,
+          due_date: document.getElementById('asgDue').value,
+          format: document.getElementById('asgFmt').value
+        }, 'asgMsg', e.target);
+      });
+
+      // Gallery (File + DB)
+      document.getElementById('galleryForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        const file = document.getElementById('galFile').files[0];
+        const caption = document.getElementById('galCaption').value;
+        const fileName = `gallery/${Date.now()}_${file.name}`;
+        
+        const { error: upErr } = await supabase.storage.from('course-content').upload(fileName, file);
+        if (upErr) return document.getElementById('galMsg').textContent = upErr.message;
+
+        const { data: { publicUrl } } = supabase.storage.from('course-content').getPublicUrl(fileName);
+        handleInsert('gallery', { caption, image_url: publicUrl }, 'galMsg', e.target);
+      });
+
+
+      // --- 2. LIST & DELETE HANDLERS ---
+      
+      const refreshAll = () => {
+        loadList('announcements', 'list-announcements', 'title');
+        loadList('lessons', 'list-lessons', 'title', 'week_number');
+        loadList('syllabus', 'list-syllabus', 'topic', 'week_number');
+        loadList('project_groups', 'list-groups', 'name', 'category');
+        loadList('assignments', 'list-assignments', 'title', 'due_date');
+        loadGalleryList();
+        loadMessages();
+        loadSubmissions();
+      };
+
+      async function loadList(table, elId, mainField, subField) {
+        const { data } = await supabase.from(table).select('*').order('created_at', { ascending: false });
+        const list = document.getElementById(elId);
+        list.innerHTML = '';
+        data.forEach(item => {
+          const li = document.createElement('li');
+          li.className = 'data-item';
+          li.innerHTML = `
+            <div class="data-info">
+              <span style="font-weight:600">${item[mainField]}</span>
+              ${subField ? `<span class="data-meta">${item[subField]}</span>` : ''}
+            </div>
+            <button class="btn-delete" data-id="${item.id}">Delete</button>
+          `;
+          li.querySelector('button').addEventListener('click', async () => {
+            if(confirm('Delete?')) { await supabase.from(table).delete().eq('id', item.id); refreshAll(); }
+          });
+          list.appendChild(li);
+        });
+      }
+
+      async function loadGalleryList() {
+        const { data } = await supabase.from('gallery').select('*').order('created_at', { ascending: false });
+        const list = document.getElementById('list-gallery');
+        list.innerHTML = '';
+        data.forEach(item => {
+          const li = document.createElement('li');
+          li.className = 'data-item';
+          li.innerHTML = `
+            <div style="display:flex; gap:0.5rem; align-items:center;">
+              <img src="${item.image_url}" style="width:30px; height:30px; border-radius:4px; object-fit:cover;">
+              <span class="data-meta">${item.caption}</span>
+            </div>
+            <button class="btn-delete">Delete</button>
+          `;
+          li.querySelector('button').addEventListener('click', async () => {
+             if(confirm('Delete?')) {
+               const fname = item.image_url.split('/').pop();
+               await supabase.storage.from('course-content').remove([`gallery/${fname}`]);
+               await supabase.from('gallery').delete().eq('id', item.id); 
+               refreshAll(); 
+             }
+          });
+          list.appendChild(li);
+        });
+      }
+
+      async function loadMessages() {
+        const { data } = await supabase.from('messages').select('*').order('created_at', { ascending: false });
+        const list = document.getElementById('list-messages');
+        list.innerHTML = '';
+        if(!data.length) list.innerHTML = '<li style="padding:1rem; color:gray;">No messages.</li>';
+        
+        data.forEach(item => {
+          const li = document.createElement('li');
+          li.className = 'data-item';
+          li.style.flexDirection = 'column';
+          li.style.alignItems = 'flex-start';
+          li.innerHTML = `
+            <div style="display:flex; justify-content:space-between; width:100%; margin-bottom:0.3rem;">
+              <span style="font-weight:700; color:var(--primary);">${item.topic || 'General'}</span>
+              <div style="display:flex; align-items:center; gap:0.5rem;">
+                <span class="data-meta">${new Date(item.created_at).toLocaleString()}</span>
+                <button class="btn-delete" data-id="${item.id}">Delete</button>
+              </div>
+            </div>
+            <p style="background:#fff; padding:0.5rem; width:100%; border:1px solid #eee; border-radius:4px;">${item.message}</p>
+            <div style="margin-top:0.3rem; font-size:0.7rem; color:gray;">
+              From: ${item.is_anonymous ? 'Anonymous' : (item.student_email || 'Student')}
+            </div>
+          `;
+          
+          li.querySelector('.btn-delete').addEventListener('click', async () => {
+             if(confirm('Delete this message?')) {
+               const { error } = await supabase.from('messages').delete().eq('id', item.id);
+               if (error) alert(error.message);
+               else refreshAll(); 
+             }
+          });
+          
+          list.appendChild(li);
+        });
+      }
+
+      async function loadSubmissions() {
+        const { data: subs } = await supabase.from('submissions').select('*, assignments(title)').order('submitted_at', { ascending: false });
+        const list = document.getElementById('list-submissions');
+        list.innerHTML = '';
+        if(!subs || !subs.length) list.innerHTML = '<li style="padding:1rem; color:gray;">No submissions yet.</li>';
+
+        subs.forEach(sub => {
+          const li = document.createElement('li');
+          li.className = 'data-item';
+          li.innerHTML = `
+            <div class="data-info">
+              <span style="font-weight:600">${sub.assignments?.title || 'Unknown Assignment'}</span>
+              <span class="data-meta">Student: ${sub.student_email || 'Unknown'}</span>
+              <span class="data-meta">Date: ${new Date(sub.submitted_at).toLocaleString()}</span>
+            </div>
+            <a href="${sub.file_url}" target="_blank" class="btn-primary" style="font-size:0.75rem; text-decoration:none;">Download File</a>
+          `;
+          list.appendChild(li);
+        });
+      }
+
+      refreshAll();
+    })();
+  </script>
+</body>
+</html>
