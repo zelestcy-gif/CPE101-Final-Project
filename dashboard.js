@@ -26,6 +26,7 @@ import { initSupabase } from './supabaseConfig.js'
 
   // Initialize UI
   updateAuthUI();
+  checkAdminStatus(); // <--- NEW: Check if user is admin
   
   // Load Content
   loadAnnouncements();
@@ -42,6 +43,25 @@ import { initSupabase } from './supabaseConfig.js'
     const logoutBtn = document.getElementById('logoutBtn')
     if (currentUser) {
       if(logoutBtn) logoutBtn.style.display = 'inline-block'
+    }
+  }
+
+  // --- NEW: ADMIN CHECK ---
+  async function checkAdminStatus() {
+    if (!currentUser) return;
+
+    // Check if the current user's email exists in the 'admins' table
+    // The RLS policy typically restricts you to only see your own row in 'admins'
+    const { data } = await supabase
+      .from('admins')
+      .select('email')
+      .eq('email', currentUser.email)
+      .single();
+
+    // If data is returned, it means the user is an admin
+    if (data) {
+      const adminBtn = document.getElementById('adminBtn');
+      if (adminBtn) adminBtn.style.display = 'inline-block';
     }
   }
 
