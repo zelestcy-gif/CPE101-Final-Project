@@ -4,32 +4,48 @@ import { initSupabase } from './supabaseConfig.js'
   const supabase = await initSupabase()
   let currentUser = null;
 
-  if (supabase) {
-    const { data } = await supabase.auth.getUser()
-    currentUser = data?.user;
-    updateAuthUI();
-    
-    // Load Content
-    loadAnnouncements();
-    loadSyllabus();
-    loadLessons();
-    loadGallery();
-    loadProjects();
-    loadAssignments();
-  } else {
-    console.warn("Public mode only");
+  // --- SECURITY GATE ---
+  // 1. If Supabase client fails, kick out
+  if (!supabase) {
+    window.location.href = '/index.html';
+    return;
   }
+
+  // 2. Check for active session immediately
+  const { data: { session } } = await supabase.auth.getSession();
+  
+  if (!session) {
+    // User is NOT logged in. Redirect to Login Page.
+    window.location.href = '/index.html';
+    return;
+  }
+
+  // If we get here, the user is logged in.
+  const { data } = await supabase.auth.getUser()
+  currentUser = data?.user;
+
+  // Initialize UI
+  updateAuthUI();
+  
+  // Load Content
+  loadAnnouncements();
+  loadSyllabus();
+  loadLessons();
+  loadGallery();
+  loadProjects();
+  loadAssignments();
+
+  // Setup Lightbox (only need to do this once)
+  setupLightbox();
 
   function updateAuthUI() {
     const logoutBtn = document.getElementById('logoutBtn')
     if (currentUser) {
       if(logoutBtn) logoutBtn.style.display = 'inline-block'
-    } else {
-      if(logoutBtn) logoutBtn.style.display = 'none'
     }
   }
 
-  // LOGOUT
+  // LOGOUT LOGIC
   const logoutBtn = document.getElementById('logoutBtn')
   if (logoutBtn) {
     logoutBtn.addEventListener('click', async (e) => {
@@ -83,11 +99,60 @@ import { initSupabase } from './supabaseConfig.js'
     const { data } = await supabase.from('gallery').select('*').order('created_at', { ascending: false });
     const el = document.getElementById('gallery-grid');
     if(!data || !data.length) { el.innerHTML = '<p>No photos.</p>'; return; }
+    
     el.innerHTML = data.map(img => `
-      <div class="gallery-item" style="background-image: url('${img.image_url}'); background-size: cover;">
+      <div class="gallery-item" 
+           style="background-image: url('${img.image_url}'); background-size: cover; cursor: pointer;"
+           data-full-url="${img.image_url}"
+           data-caption="${img.caption}">
         <span class="gallery-label">${img.caption}</span>
       </div>
     `).join('');
+
+    // Add click listeners to open lightbox
+    document.querySelectorAll('.gallery-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const url = item.getAttribute('data-full-url');
+        const caption = item.getAttribute('data-caption');
+        openLightbox(url, caption);
+      });
+    });
+  }
+
+  function setupLightbox() {
+    const lightboxHtml = `
+      <div id="lightbox" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:1000; justify-content:center; align-items:center; flex-direction:column;">
+        <span id="closeLightbox" style="position:absolute; top:20px; right:30px; font-size:40px; color:white; cursor:pointer;">&times;</span>
+        <img id="lightboxImg" style="max-width:90%; max-height:80vh; object-fit:contain; border:2px solid white; border-radius:4px;">
+        <p id="lightboxCaption" style="color:white; margin-top:10px; font-size:1.1rem;"></p>
+        <a id="lightboxDownload" href="#" download target="_blank" class="btn-primary" style="margin-top:15px; text-decoration:none; display:inline-flex; align-items:center; gap:5px;">
+          <span>Download Image</span>
+        </a>
+      </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', lightboxHtml);
+
+    const lightbox = document.getElementById('lightbox');
+    const closeBtn = document.getElementById('closeLightbox');
+    
+    // Close on click background or X
+    closeBtn.addEventListener('click', () => { lightbox.style.display = 'none'; });
+    lightbox.addEventListener('click', (e) => { 
+      if(e.target === lightbox) lightbox.style.display = 'none'; 
+    });
+  }
+
+  function openLightbox(url, caption) {
+    const lightbox = document.getElementById('lightbox');
+    const img = document.getElementById('lightboxImg');
+    const cap = document.getElementById('lightboxCaption');
+    const dl = document.getElementById('lightboxDownload');
+
+    img.src = url;
+    cap.textContent = caption;
+    dl.href = url;
+    
+    lightbox.style.display = 'flex';
   }
 
   async function loadProjects() {
@@ -131,11 +196,9 @@ import { initSupabase } from './supabaseConfig.js'
     
     // 3. Merge & Render
     el.innerHTML = assignments.map(a => {
-      // Check if we found a submission for this assignment
       const existingSub = mySubmissions.find(s => s.assignment_id === a.id);
-
       if (existingSub) {
-        // --- STATE: SUBMITTED ---
+        // STATE: SUBMITTED
         return `
           <div class="assignment-item" style="border-color: #22c55e; background: #f0fdf4;">
             <div>
@@ -154,7 +217,7 @@ import { initSupabase } from './supabaseConfig.js'
           </div>
         `;
       } else {
-        // --- STATE: NOT SUBMITTED ---
+        // STATE: NOT SUBMITTED
         return `
           <div class="assignment-item">
             <div>
@@ -167,7 +230,7 @@ import { initSupabase } from './supabaseConfig.js'
       }
     }).join('');
 
-    // Attach Listeners for UPLOAD
+    // Attach Listeners
     document.querySelectorAll('.upload-trigger').forEach(btn => {
       btn.addEventListener('click', (e) => {
         if(!currentUser) return alert("Please log in to submit assignments.");
@@ -176,30 +239,20 @@ import { initSupabase } from './supabaseConfig.js'
       });
     });
 
-    // Attach Listeners for REMOVE
     document.querySelectorAll('.remove-trigger').forEach(btn => {
       btn.addEventListener('click', async (e) => {
         if(!confirm("Are you sure you want to remove this submission?")) return;
-        
         const subId = e.target.getAttribute('data-sub-id');
         const fileUrl = e.target.getAttribute('data-file-url');
         
-        // A. Delete from Storage
         try {
             const path = fileUrl.split('/course-content/')[1]; 
-            if(path) {
-                await supabase.storage.from('course-content').remove([path]);
-            }
+            if(path) await supabase.storage.from('course-content').remove([path]);
         } catch(err) { console.warn("Storage delete warning:", err); }
 
-        // B. Delete from Database
         const { error } = await supabase.from('submissions').delete().eq('id', subId);
-        
         if(error) alert("Error removing submission: " + error.message);
-        else {
-            alert("Submission removed.");
-            loadAssignments(); // Refresh UI
-        }
+        else { alert("Submission removed."); loadAssignments(); }
       });
     });
   }
@@ -214,8 +267,10 @@ import { initSupabase } from './supabaseConfig.js'
     const originalBtn = document.querySelector(`button[data-id="${activeAssignmentId}"]`);
     if(originalBtn) originalBtn.textContent = "Uploading...";
 
-    // 1. Upload to Storage
-    const fileName = `submissions/${activeAssignmentId}/${Date.now()}_${file.name}`;
+    // Upload to Storage
+    // Organized path: submissions/ASSIGNMENT_ID/USER_EMAIL/FILENAME
+    const fileName = `submissions/${activeAssignmentId}/${currentUser.email}/${Date.now()}_${file.name}`;
+    
     const { error: upErr } = await supabase.storage.from('course-content').upload(fileName, file);
     
     if(upErr) {
@@ -224,10 +279,8 @@ import { initSupabase } from './supabaseConfig.js'
       return;
     }
 
-    // 2. Get URL
+    // Insert into DB
     const { data: { publicUrl } } = supabase.storage.from('course-content').getPublicUrl(fileName);
-
-    // 3. Insert into Submissions Table
     const { error: dbErr } = await supabase.from('submissions').insert([{
       assignment_id: activeAssignmentId,
       student_email: currentUser.email,
@@ -239,14 +292,12 @@ import { initSupabase } from './supabaseConfig.js'
         if(originalBtn) originalBtn.textContent = "Upload";
     } else {
         alert("Assignment submitted successfully!");
-        loadAssignments(); // Refresh list to show "Submitted" state
+        loadAssignments(); 
     }
     
-    // Reset
     fileInput.value = '';
     activeAssignmentId = null;
   });
-
 
   // --- DM LOGIC ---
   const dmForm = document.getElementById('dmForm');
@@ -259,8 +310,6 @@ import { initSupabase } from './supabaseConfig.js'
       const message = document.getElementById('dmMessage').value;
       const is_anonymous = document.getElementById('dmAnonymous').checked;
 
-      // Now we also send student_email. 
-      // The Admin panel will decide whether to show it based on 'is_anonymous'.
       const { error } = await supabase.from('messages').insert([{
         topic, 
         message, 
@@ -269,10 +318,7 @@ import { initSupabase } from './supabaseConfig.js'
       }]);
 
       if(error) alert("Error sending message: " + error.message);
-      else {
-        alert("Message sent!");
-        dmForm.reset();
-      }
+      else { alert("Message sent!"); dmForm.reset(); }
     });
   }
 

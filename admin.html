@@ -12,7 +12,7 @@
     .success { color: green; } .error { color: red; }
     
     .manage-section { margin-top: 2rem; border-top: 2px dashed var(--border); padding-top: 2rem; }
-    .data-list { list-style: none; max-height: 250px; overflow-y: auto; background: #f9fafb; border: 1px solid var(--border); border-radius: 8px; }
+    .data-list { list-style: none; max-height: 400px; overflow-y: auto; background: #f9fafb; border: 1px solid var(--border); border-radius: 8px; }
     .data-item { padding: 0.75rem; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
     .data-item:last-child { border-bottom: none; }
     .data-info { display: flex; flex-direction: column; gap: 0.2rem; }
@@ -27,6 +27,9 @@
     .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
+
+    /* Grouping Styles */
+    .group-header { background: #e5e7eb; padding: 0.5rem 1rem; font-weight: 700; font-size: 0.85rem; color: #374151; border-bottom: 1px solid #d1d5db; position: sticky; top: 0; }
   </style>
 </head>
 
@@ -162,7 +165,7 @@
       <div class="col-left">
         <section class="card">
           <div class="card-header"><h2 class="card-title">Student Submissions</h2></div>
-          <p style="font-size:0.8rem; color:gray; margin-bottom:1rem;">Files uploaded by students for active assignments.</p>
+          <p style="font-size:0.8rem; color:gray; margin-bottom:1rem;">Files uploaded by students, grouped by assignment.</p>
           <ul id="list-submissions" class="data-list" style="max-height: 600px;">Loading...</ul>
         </section>
       </div>
@@ -392,24 +395,54 @@
         });
       }
 
+      // --- GROUPED SUBMISSIONS LOGIC ---
       async function loadSubmissions() {
-        const { data: subs } = await supabase.from('submissions').select('*, assignments(title)').order('submitted_at', { ascending: false });
+        // 1. Fetch Assignments to serve as headers
+        const { data: assignments } = await supabase.from('assignments').select('*').order('created_at', { ascending: false });
+        // 2. Fetch all submissions
+        const { data: submissions } = await supabase.from('submissions').select('*').order('submitted_at', { ascending: false });
+
         const list = document.getElementById('list-submissions');
         list.innerHTML = '';
-        if(!subs || !subs.length) list.innerHTML = '<li style="padding:1rem; color:gray;">No submissions yet.</li>';
 
-        subs.forEach(sub => {
-          const li = document.createElement('li');
-          li.className = 'data-item';
-          li.innerHTML = `
-            <div class="data-info">
-              <span style="font-weight:600">${sub.assignments?.title || 'Unknown Assignment'}</span>
-              <span class="data-meta">Student: ${sub.student_email || 'Unknown'}</span>
-              <span class="data-meta">Date: ${new Date(sub.submitted_at).toLocaleString()}</span>
-            </div>
-            <a href="${sub.file_url}" target="_blank" class="btn-primary" style="font-size:0.75rem; text-decoration:none;">Download File</a>
-          `;
-          list.appendChild(li);
+        if(!assignments || !assignments.length) {
+          list.innerHTML = '<li style="padding:1rem; color:gray;">No active assignments.</li>';
+          return;
+        }
+
+        // 3. Loop through assignments and find matching submissions
+        assignments.forEach(asg => {
+          // Create Group Header
+          const header = document.createElement('li');
+          header.className = 'group-header';
+          header.textContent = asg.title;
+          list.appendChild(header);
+
+          // Filter submissions for this assignment
+          const relevantSubs = submissions.filter(s => s.assignment_id === asg.id);
+
+          if (relevantSubs.length === 0) {
+            const emptyMsg = document.createElement('li');
+            emptyMsg.style.padding = '0.5rem 1rem';
+            emptyMsg.style.color = '#9ca3af';
+            emptyMsg.style.fontSize = '0.8rem';
+            emptyMsg.textContent = 'No submissions yet.';
+            list.appendChild(emptyMsg);
+          } else {
+            // Render each submission
+            relevantSubs.forEach(sub => {
+              const li = document.createElement('li');
+              li.className = 'data-item';
+              li.innerHTML = `
+                <div class="data-info">
+                  <span style="font-weight:600">${sub.student_email || 'Unknown Student'}</span>
+                  <span class="data-meta">Date: ${new Date(sub.submitted_at).toLocaleString()}</span>
+                </div>
+                <a href="${sub.file_url}" target="_blank" class="btn-primary" style="font-size:0.75rem; text-decoration:none;">Download</a>
+              `;
+              list.appendChild(li);
+            });
+          }
         });
       }
 

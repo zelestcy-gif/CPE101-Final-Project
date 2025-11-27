@@ -15,241 +15,67 @@
         margin-bottom: 3rem;
         border-radius: 12px;
       }
-
-      .login-hero h2 {
-        font-size: 2rem;
-        font-weight: 700;
-        margin: 0 0 0.5rem 0;
-      }
-
-      .login-hero p {
-        font-size: 1rem;
-        opacity: 0.95;
-        margin: 0;
-      }
-
-      .login-container {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 100vh;
-        background: #f5f7fb;
-        padding: 1rem;
-      }
-
-      .login-wrapper {
-        width: 100%;
-        max-width: 450px;
-      }
-
-      .login-card {
-        background: white;
-        padding: 2.5rem;
-        border-radius: 12px;
-        box-shadow: 0 10px 40px rgba(15, 23, 42, 0.12);
-      }
-
-      .login-header {
-        text-align: center;
-        margin-bottom: 2rem;
-      }
-
-      .login-header h1 {
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: #151823;
-        margin: 0 0 0.5rem 0;
-      }
-
-      .login-header p {
-        color: #6b7280;
-        font-size: 0.95rem;
-        margin: 0;
-      }
-
-      .form-group {
-        margin-bottom: 1.5rem;
-      }
-
-      .form-group label {
-        display: block;
-        font-size: 0.9rem;
-        font-weight: 500;
-        color: #151823;
-        margin-bottom: 0.5rem;
-      }
-
-      .form-group input {
-        width: 100%;
-        padding: 0.75rem;
-        border: 1px solid #e5e7eb;
-        border-radius: 8px;
-        font-size: 0.95rem;
-        transition: all 0.2s;
-        font-family: inherit;
-      }
-
-      .form-group input:focus {
-        outline: none;
-        border-color: #3056d3;
-        box-shadow: 0 0 0 3px rgba(48, 86, 211, 0.1);
-      }
-
-      .form-group input::placeholder {
-        color: #9ca3af;
-      }
-
-      .button-group {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-      }
-
-      .btn-auth {
-        padding: 0.85rem;
-        border: none;
-        border-radius: 8px;
-        font-size: 0.95rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s;
-      }
-
-      .btn-signin {
-        background: #3056d3;
-        color: white;
-      }
-
-      .btn-signin:hover {
-        background: #2644a8;
-      }
-
-      .btn-signup {
-        background: #f0f0f0;
-        color: #151823;
-        border: 1px solid #e5e7eb;
-      }
-
-      .btn-signup:hover {
-        background: #e5e7eb;
-      }
-
-      .btn-auth:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-      }
-
-      .message {
-        margin-bottom: 1.5rem;
-        padding: 0.85rem;
-        border-radius: 8px;
-        font-size: 0.9rem;
-        display: none;
-      }
-
-      .message.error {
-        display: block;
-        background: #fee2e2;
-        color: #991b1b;
-        border: 1px solid #fca5a5;
-      }
-
-      .message.success {
-        display: block;
-        background: #dcfce7;
-        color: #166534;
-        border: 1px solid #86efac;
-      }
-
-      .login-footer {
-        text-align: center;
-        margin-top: 2rem;
-        padding-top: 1.5rem;
-        border-top: 1px solid #e5e7eb;
-        color: #6b7280;
-        font-size: 0.85rem;
-      }
-
-      .login-footer p {
-        margin: 0.5rem 0;
-      }
-
-      /* Responsive */
-      @media (max-width: 480px) {
-        .login-card {
-          padding: 1.5rem;
-        }
-
-        .login-header h1 {
-          font-size: 1.5rem;
-        }
-
-        .button-group {
-          grid-template-columns: 1fr;
-        }
-      }
+      .login-hero h2 { margin: 0 0 0.5rem 0; }
+      .login-hero p { margin: 0; opacity: 0.95; }
+      .login-container { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #f5f7fb; padding: 1rem; }
+      .login-wrapper { width: 100%; max-width: 450px; }
+      .login-card { background: white; padding: 2.5rem; border-radius: 12px; box-shadow: 0 10px 40px rgba(15, 23, 42, 0.12); }
+      .login-header { text-align: center; margin-bottom: 2rem; }
+      .login-header h1 { font-size: 1.8rem; margin: 0 0 0.5rem 0; color: #151823; }
+      .login-header p { color: #6b7280; font-size: 0.95rem; margin: 0; }
+      .form-group { margin-bottom: 1.5rem; }
+      .form-group label { display: block; font-size: 0.9rem; font-weight: 500; margin-bottom: 0.5rem; }
+      .form-group input { width: 100%; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 0.95rem; }
+      .button-group { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+      .btn-auth { padding: 0.85rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
+      .btn-signin { background: #3056d3; color: white; }
+      .btn-signup { background: #f0f0f0; color: #151823; }
+      
+      .message { margin-bottom: 1.5rem; padding: 0.85rem; border-radius: 8px; font-size: 0.9rem; display: none; }
+      .message.error { display: block; background: #fee2e2; color: #991b1b; }
+      .message.success { display: block; background: #dcfce7; color: #166534; }
     </style>
   </head>
   <body>
     <div class="login-container">
       <div class="login-wrapper">
-        <!-- Hero Section -->
         <div class="login-hero">
-          <h2>Course Exploration</h2>
+          <h2>Exploration Hub</h2>
           <p>Sign in to access your course materials and dashboard</p>
         </div>
 
-        <!-- Login Card -->
         <div class="login-card">
-          <div class="login-header">
-            <h1>Welcome to <br>
-            Course Exploration
-            </h1> 
-            <p>Enter your credentials to get started</p>
-          </div>
-
           <div id="message" class="message"></div>
 
-          <form id="loginForm">
-            <div class="form-group">
-              <label for="email">Email Address</label>
-              <input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                autocomplete="email"
-                required
-              />
+          <!-- LOGIN FORM -->
+          <div id="loginSection">
+            <div class="login-header">
+              <h1>Welcome Back</h1> 
+              <p>Enter your credentials to get started</p>
             </div>
+            <form id="loginForm">
+              <div class="form-group">
+                <label for="email">Email Address</label>
+                <input id="email" type="email" placeholder="you@example.com" required />
+              </div>
+              <div class="form-group">
+                <label for="password">Password</label>
+                <input id="password" type="password" placeholder="••••••••" required />
+              </div>
 
-            <div class="form-group">
-              <label for="password">Password</label>
-              <input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                autocomplete="current-password"
-                required
-              />
-            </div>
+              <div class="button-group">
+                <button type="button" id="signin" class="btn-auth btn-signin">Sign In</button>
+                <button type="button" id="signup" class="btn-auth btn-signup">Sign Up</button>
+              </div>
+            </form>
+          </div>
 
-            <div class="button-group">
-              <button type="button" id="signin" class="btn-auth btn-signin">
-                Sign In
-              </button>
-              <button type="button" id="signup" class="btn-auth btn-signup">
-                Sign Up
-              </button>
-            </div>
-          </form>
-
-          <div class="login-footer">
+          <div class="login-footer" style="text-align: center; margin-top: 2rem; color: #6b7280; font-size: 0.85rem;">
             <p>🔒 Your data is secure with Supabase authentication</p>
-            <p>First time? Sign up above to create an account</p>
           </div>
         </div>
       </div>
     </div>
-
     <script type="module" src="script.js"></script>
+  </body>
+</html>

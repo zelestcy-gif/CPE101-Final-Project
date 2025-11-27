@@ -1,32 +1,39 @@
-import { initSupabase, supabase as _supabase } from './supabaseConfig.js'
+import { initSupabase } from './supabaseConfig.js'
 
-// Initialize Supabase first, then wire up UI
 (async function init() {
   const supabase = await initSupabase()
   if (!supabase) {
-    console.error('❌ Supabase initialization failed. Check your environment variables.')
-    if (window.logDebug) window.logDebug('❌ Supabase failed to initialize');
+    console.error('❌ Supabase initialization failed.')
     return
   }
 
-  if (window.logDebug) window.logDebug('✅ Supabase initialized');
-
+  // --- UI Elements ---
   const emailEl = document.getElementById('email')
   const passwordEl = document.getElementById('password')
-  const signupBtn = document.getElementById('signup')
   const signinBtn = document.getElementById('signin')
+  const signupBtn = document.getElementById('signup')
   const msg = document.getElementById('message')
 
+  // --- Helpers ---
   function setMessage(text, isError = true) {
     msg.textContent = text
-    if (text) {
-      msg.className = 'message ' + (isError ? 'error' : 'success')
-    } else {
-      msg.className = 'message'
-    }
-    console.log((isError ? '❌' : '✅') + ' ' + text)
-    if (window.logDebug) window.logDebug((isError ? '❌' : '✅') + ' ' + text);
+    msg.className = text ? ('message ' + (isError ? 'error' : 'success')) : 'message'
   }
+
+  // --- Login / Signup Logic ---
+  signinBtn.addEventListener('click', async () => {
+    setMessage('')
+    const email = emailEl.value.trim()
+    const password = passwordEl.value
+    if (!email || !password) return setMessage('Please enter email and password')
+
+    signinBtn.disabled = true; signinBtn.textContent = "Checking...";
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+    signinBtn.disabled = false; signinBtn.textContent = "Sign In";
+
+    if (error) return setMessage('Sign in error: ' + error.message)
+    window.location.href = 'dashboard.html'
+  })
 
   signupBtn.addEventListener('click', async () => {
     setMessage('')
@@ -34,51 +41,17 @@ import { initSupabase, supabase as _supabase } from './supabaseConfig.js'
     const password = passwordEl.value
     if (!email || !password) return setMessage('Please enter email and password')
 
-    if (window.logDebug) window.logDebug('Attempting sign up with: ' + email);
-    signupBtn.disabled = signinBtn.disabled = true
+    signupBtn.disabled = true; signupBtn.textContent = "Creating...";
     const { data, error } = await supabase.auth.signUp({ email, password })
-    signupBtn.disabled = signinBtn.disabled = false
+    signupBtn.disabled = false; signupBtn.textContent = "Sign Up";
 
-    if (error) {
-      console.error('Sign up error:', error)
-      return setMessage('Sign up error: ' + error.message)
-    }
-
-    setMessage('Check your email for a confirmation link (if required).', false)
+    if (error) return setMessage('Sign up error: ' + error.message)
+    setMessage('Account created! Check your email to confirm.', false)
   })
 
-  signinBtn.addEventListener('click', async () => {
-    setMessage('')
-    const email = emailEl.value.trim()
-    const password = passwordEl.value
-    if (!email || !password) return setMessage('Please enter email and password')
+  // --- Redirect Check ---
+  // If user already logged in, go to dashboard
+  const { data } = await supabase.auth.getUser()
+  if (data?.user) window.location.href = 'dashboard.html'
 
-    if (window.logDebug) window.logDebug('Attempting sign in with: ' + email);
-    signupBtn.disabled = signinBtn.disabled = true
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-    signupBtn.disabled = signinBtn.disabled = false
-
-    if (error) {
-      console.error('Sign in error:', error)
-      if (window.logDebug) window.logDebug('❌ Sign in failed: ' + error.message);
-      return setMessage('Sign in error: ' + error.message)
-    }
-
-    if (window.logDebug) window.logDebug('✅ Sign in successful! Redirecting...');
-    // On success redirect to dashboard
-    window.location.href = '/dashboard.html'
-  })
-
-  // Optional: if user already logged in, redirect straight to dashboard
-  (async function checkRedirect() {
-    try {
-      const { data } = await supabase.auth.getUser()
-      if (data?.user) {
-        if (window.logDebug) window.logDebug('User already logged in, redirecting...');
-        window.location.href = '/dashboard.html'
-      }
-    } catch (err) {
-      console.error('Error checking user:', err)
-    }
-  })()
 })()
