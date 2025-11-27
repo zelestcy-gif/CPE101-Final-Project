@@ -47,7 +47,6 @@
         <div class="login-card">
           <div id="message" class="message"></div>
 
-          <!-- LOGIN FORM -->
           <div id="loginSection">
             <div class="login-header">
               <h1>Welcome Back</h1> 
@@ -61,11 +60,31 @@
               <div class="form-group">
                 <label for="password">Password</label>
                 <input id="password" type="password" placeholder="••••••••" required />
+                <div style="text-align: right; margin-top: 0.25rem;">
+                    <a href="#" id="showForgot" style="font-size: 0.8rem; color: #3056d3;">Forgot Password?</a>
+                </div>
               </div>
 
               <div class="button-group">
                 <button type="button" id="signin" class="btn-auth btn-signin">Sign In</button>
                 <button type="button" id="signup" class="btn-auth btn-signup">Sign Up</button>
+              </div>
+            </form>
+          </div>
+
+          <div id="forgotSection" style="display: none;">
+            <div class="login-header">
+              <h1>Reset Password</h1> 
+              <p>Enter your email to receive a reset link</p>
+            </div>
+            <form>
+              <div class="form-group">
+                <label for="resetEmail">Email Address</label>
+                <input id="resetEmail" type="email" placeholder="you@example.com" />
+              </div>
+              <button type="button" id="sendReset" class="btn-auth btn-signin" style="width:100%; margin-bottom: 1rem;">Send Reset Link</button>
+              <div style="text-align: center;">
+                  <a href="#" id="showLogin" style="font-size: 0.9rem; color: #6b7280;">Back to Login</a>
               </div>
             </form>
           </div>

@@ -1,7 +1,7 @@
 {
-  "name": "login-system",
+  "name": "exploration-hub",
   "version": "1.0.0",
-  "description": "Simple Supabase login demo (HTML/CSS/JS)",
+  "description": "A website build for CPE101 Course",
   "private": true,
   "scripts": {
     "start": "npx serve . -l 3000"
