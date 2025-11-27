@@ -8,7 +8,7 @@ A full-featured Course Management System prototype built with Vanilla HTML/JS an
 * **Dynamic Content:** View Announcements, Syllabus, Lessons, and Project Groups fetched in real-time.
 * **Secure Authentication:**
     * **Google OAuth Login:** One-click sign-in with Google.
-    * **Domain Restriction:** Sign-ups restricted to specific email domains (e.g., `@kmutt.ac.th`).
+    * **Domain Restriction:** Sign-ups restricted to specific email domains (e.g., `@mail.kmutt.ac.th`).
     * **Password Reset:** Secure email-based password recovery flow.
 * **Gallery:** View course activity photos.
 * **Submission Portal:** Upload assignment files (PDFs, Zips) directly to cloud storage.
@@ -97,7 +97,7 @@ create table admins ( email text primary key, created_at timestamptz default now
 
 create table allowed_domains ( id uuid default gen_random_uuid() primary key, domain_name text not null, created_at timestamptz default now() );
 -- Insert default domain
-insert into allowed_domains (domain_name) values ('@kmutt.ac.th');
+insert into allowed_domains (domain_name) values ('@mail.kmutt.ac.th');
 
 -- 4. Enable RLS
 alter table announcements enable row level security;
