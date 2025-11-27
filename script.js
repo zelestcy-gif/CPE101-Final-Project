@@ -19,6 +19,8 @@ import { initSupabase } from './supabaseConfig.js'
   const sendResetBtn = document.getElementById('sendReset')
   const resetEmailEl = document.getElementById('resetEmail')
 
+  const googleBtn = document.getElementById('googleBtn');
+
   // --- Helpers ---
   function setMessage(text, isError = true) {
     msg.textContent = text
@@ -115,6 +117,40 @@ import { initSupabase } from './supabaseConfig.js'
     
     setMessage('Account created! Check your email to confirm.', false)
   })
+
+  if (googleBtn) {
+  googleBtn.addEventListener('click', async () => {
+    setMessage('');
+    
+    // UI Feedback
+    googleBtn.disabled = true;
+    googleBtn.innerHTML = 'Redirecting...';
+
+    // 3. Trigger Supabase OAuth
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        // Redirect back to this page (or dashboard) after Google login
+        redirectTo: window.location.origin + '/dashboard.html',
+        
+        // OPTIONAL: Force Google to only allow specific domains (e.g., school email)
+        // If you remove this, anyone with a Gmail account can log in.
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+          // CHANGE THIS to your school domain if you want to restrict it
+          // hd: 'kmutt.ac.th' 
+        }
+      }
+    });
+
+    if (error) {
+      googleBtn.disabled = false;
+      googleBtn.innerHTML = 'Sign in with Google'; // Reset text
+      setMessage('Google Login Error: ' + error.message, true);
+    }
+  });
+}
 
   // --- Redirect Check ---
   const { data } = await supabase.auth.getUser()
